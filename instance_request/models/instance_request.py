@@ -35,6 +35,19 @@ class InstanceRequest(models.Model):
     def action_progress(self):
         for record in self:
             record.state = 'in_progress'
+            user_group = self.env.ref('instance_request.group_instance_request_user')
+            users = user_group.users
+            user_connected = self.env.user
+            print("user_connected ===>", user_connected)
+            has_user_group = user_connected.has_group('instance_request.group_instance_request_user')
+            print("has_user_group ===>", has_user_group)
+            for user in users:
+                print("=======> name", user.name)
+            print("=======>", user_group)
+            model_access = user_group.model_access
+            print("================== model_access")
+            for access in model_access:
+                print("====>", access.name, access.perm_create, access.perm_write, access.perm_read, access.perm_unlink)
 
     def action_done(self):
         for record in self:

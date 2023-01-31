@@ -45,7 +45,7 @@
                         <button string="Set to progress" type="object" name="action_progress" class="oe_highlight"
 
                                 states="submitted,done"/>
-                        <button string="Done" type="object" name="action_done" class="oe_highlight"
+                        <button string="Done" type="object" groups="instance_request.group_instance_request_resp" name="action_done" class="oe_highlight"
                                 states="in_progress"/>
                         <field name="state" widget="statusbar" options="{'clickable': '1'}"/>
 
@@ -56,8 +56,8 @@
                                 <field name="name" required="1"/>
                             </group>
                             <group>
-                                <field name="color" invisible="0"/>
-                                <field name="limit_date" attrs="{'invisible': [('color', '=', 'red')]}"/>
+                                <field name="color" groups="instance_request.group_instance_request" invisible="0"/>
+                                <field name="limit_date" />
                             </group>
                         </group>
                     </sheet>
@@ -69,7 +69,7 @@
         <record model="ir.actions.act_window" id="instance_request_action">
             <field name="name">Demande de creation</field>
             <field name="res_model">instance.request</field>
-            <field name="domain">[('create_uid', '=', uid)]</field>
+<!--            <field name="domain">[('create_uid', '=', uid)]</field>-->
             <!--            <field name="context">{'group_by': ['limit_date']}</field>-->
             <field name="view_mode">tree,form</field>
         </record>
@@ -91,10 +91,7 @@
         -->
 
         <!-- Top menu item -->
-        <menuitem name="instance_request"
-                  id="menu_root"
-                  action="instance_request_action"
-        />
+
 
         <record id="action_server_treated" model="ir.actions.server">
             <field name="name">Set to done</field>
@@ -117,6 +114,30 @@
             <field name="state">code</field>
             <field name="code">model.action_done()</field>
         </record>
+
+
+        <menuitem name="Instance request"
+                  id="menu_root"
+                  groups="instance_request.group_instance_request_user"
+        />
+        <menuitem name="Mes demandes"
+                  id="menu_my_request"
+                  parent="instance_request.menu_root"
+                  action="instance_request_action"
+                  groups="instance_request.group_instance_request_user"
+        />
+        <menuitem name="Responsables"
+                  id="menu_resp"
+                  parent="instance_request.menu_root"
+                  action="instance_request_action"
+                  groups="instance_request.group_instance_request_resp"
+        />
+        <menuitem name="Configuration"
+                  id="menu_config"
+                  parent="instance_request.menu_root"
+                  action="instance_request_action"
+                  groups="instance_request.group_instance_request"
+        />
         <!-- menu categories -->
         <!--
             <menuitem name="Menu 1" id="instance_request.menu_1" parent="instance_request.menu_root"/>
