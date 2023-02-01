@@ -1,0 +1,8 @@
+<odoo>
+
+    <record model="instance.request" id="instance_1">
+        <field name="name">Formation</field>
+        <field name="limit_date">2023-01-27</field>
+    </record>
+
+</odoo>

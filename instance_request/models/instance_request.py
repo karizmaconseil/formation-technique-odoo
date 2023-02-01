@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from pprint import pprint
 
 from odoo import models, fields, api
 
@@ -22,6 +23,41 @@ class InstanceRequest(models.Model):
     color = fields.Selection(
         [('red', "Red"), ('green', "Green"), ('yellow', "Yellow")], default='red', tracking=True
     )
+    cpu = fields.Integer(string="CPU")
+    ram = fields.Float(string="RAM")
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        print("======> vals_list")
+        pprint(vals_list)
+        for val in vals_list:
+            print("===>", val)
+            val['cpu'] = 2
+            print("===>", val)
+        records = super().create(vals_list)
+        print("======> records", records)
+        for rec in records:
+            print("=====> RAM before", rec.ram)
+            rec.ram = 16
+            print("=====> RAM after", rec.ram)
+
+        return records
+
+    def write(self, vals):
+        result = super().write(vals)
+        return result
+
+    def unlink(self):
+        result = super().unlink()
+        return result
+
+    @api.onchange('color', 'name', 'state')
+    def recal_limit_date(self):
+        for record in self:
+            if record.color == 'red':
+                record.limit_date = False
+            else:
+                record.limit_date = fields.Date.today()
 
     def action_draft(self):
         for record in self:
