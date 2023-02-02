@@ -2,6 +2,7 @@
 from pprint import pprint
 
 from odoo import models, fields, api
+from odoo.exceptions import UserError, ValidationError
 
 
 class InstanceRequest(models.Model):
@@ -26,6 +27,17 @@ class InstanceRequest(models.Model):
     cpu = fields.Integer(string="CPU")
     ram = fields.Float(string="RAM")
 
+    odoo_version_id = fields.Many2one('odoo.version', string="Version odoo")
+    odoo_version_ids = fields.Many2many('odoo.version', string="Versions odoo")
+    requests_line_ids = fields.One2many('instance.request.line', 'instance_id', string="Lines")
+
+    nb_lines = fields.Integer(string="Nb lines", compute='_compute_nb_lines', store=1)
+
+    @api.depends('requests_line_ids')
+    def _compute_nb_lines(self):
+        for record in self:
+            record.nb_lines = len(record.requests_line_ids)
+
     @api.model_create_multi
     def create(self, vals_list):
         print("======> vals_list")
@@ -48,6 +60,8 @@ class InstanceRequest(models.Model):
         return result
 
     def unlink(self):
+        if self.state == 'done':
+            raise UserError("You can't delete a record in state done")
         result = super().unlink()
         return result
 
@@ -95,6 +109,8 @@ class InstanceRequest(models.Model):
 
     def action_done(self):
         for record in self:
+            if not record.limit_date:
+                raise ValidationError("You cant done a request without limit date")
             record.state = 'done'
             record.activity_feedback(['instance_request.create_instance_activity'])
             template = self.env.ref('instance_request.instance_request_creation')
