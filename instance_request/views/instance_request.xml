@@ -6,9 +6,27 @@
             <field name="model">instance.request</field>
             <field name="arch" type="xml">
                 <search>
-                    <field name="name"/>
+                    <field name="name" string="Name and odoo version"
+                           filter_domain="['|', ('name', 'ilike', self), ('odoo_version_id', 'ilike', self)]"/>
                     <field name="limit_date"/>
                     <field name="state"/>
+                    <field name="color" invisible="1"/>
+
+                    <filter name="instance_done" string="Done"
+                            domain="[('state', '=', 'done')]"/>
+                    <filter name="instance_draft" string="Draft"
+                            domain="[('state', '=', 'draft')]"/>
+                    <separator/>
+                    <filter name="instance_red" string="Red"
+                            domain="[('color', '=', 'red')]"/>
+
+                    <group string="Group By">
+                        <filter name="group_by_state" string="State"
+                                context="{'group_by': 'state'}"/>
+                        <filter name="group_by_odoo_version_id" string="Odoo version"
+                                context="{'group_by': 'odoo_version_id'}"/>
+                    </group>
+
                 </search>
             </field>
         </record>
@@ -17,8 +35,10 @@
             <field name="name">Demande de creation d'instance</field>
             <field name="model">instance.request</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree decoration-warning="color=='yellow'" decoration-danger="color=='red'"
+                      decoration-success="color=='green'">
                     <field name="name"/>
+                    <field name="color" invisible="0"/>
                     <field name="odoo_version_id"/>
                     <field name="odoo_version_ids" widget="many2many_tags" options="{'color_field': 'id'}"/>
                     <field name="limit_date"/>
@@ -31,11 +51,88 @@
                 </tree>
             </field>
         </record>
+
+        <record model="ir.ui.view" id="instance_request_kanban">
+            <field name="name">Demande de creation d'instance</field>
+            <field name="model">instance.request</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile" sample="1" default_group_by="state">
+                    <field name="name"/>
+                    <field name="color"/>
+                    <field name="state"/>
+                    <field name="limit_date"/>
+                    <field name="odoo_version_ids"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="row mb4">
+                                    <div class="col-12">
+                                        <field name="name"/>
+                                        <br/>
+                                        <field name="color"/>
+                                        <field name="odoo_version_ids" widget="many2many_tags"
+                                               options="{'color_field': 'id'}"/>
+                                        <field name="limit_date"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="instance_request_graph">
+            <field name="name">Demande de creation d'instance</field>
+            <field name="model">instance.request</field>
+            <field name="arch" type="xml">
+                <graph string="Instance graph">
+                    <field name="state"/>
+                    <field name="nb_lines" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="instance_request_pivot">
+            <field name="name">Demande de creation d'instance</field>
+            <field name="model">instance.request</field>
+            <field name="arch" type="xml">
+                <pivot string="Instance pivot">
+                    <field name="state" type="col"/>
+                    <field name="odoo_version_id" type="row"/>
+                    <field name="nb_lines" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+<!--        <record model="ir.ui.view" id="instance_request_dashboard">
+            <field name="name">Demande de creation d'instance</field>
+            <field name="model">instance.request</field>
+            <field name="arch" type="xml">
+                <dashboard sample="1">
+                    <view type="graph" ref="instance_request.instance_request_graph"/>
+                    <group>
+                        <group>
+                            <aggregate name="nb_lines" string="Total Sales" field="nb_lines"/>
+                            <aggregate name="ram" string="Untaxed Total" field="ram"/>
+                            <formula name="nb_lines" string="ram by nb_lines"
+                                     value="record.nb_lines / record.ram"/>
+                        </group>
+                        <group col="1">
+                            <widget name="pie_chart" title="Sales Teams" attrs="{'groupby': 'odoo_version_id'}"/>
+                        </group>
+                    </group>
+                    <view type="pivot" ref="instance_request.instance_request_graph"/>
+                </dashboard>
+            </field>
+        </record>-->
+
+
         <record model="ir.ui.view" id="odoo_version_list">
             <field name="name">Odoo Version</field>
             <field name="model">odoo.version</field>
             <field name="arch" type="xml">
-                <tree>
+                <tree editable="top" default_order="name asc" multi_edit="1">
                     <field name="name"/>
                     <field name="current_version"/>
                 </tree>
@@ -47,6 +144,7 @@
             <field name="model">instance.request</field>
             <field name="arch" type="xml">
                 <form string="Demande">
+                    <!--                    create="false" duplicate="false"-->
                     <header>
                         <button string="Set to draft" type="object" name="action_draft" class="oe_highlight"
 
@@ -104,7 +202,7 @@
             <field name="res_model">instance.request</field>
             <!--            <field name="domain">[('create_uid', '=', uid)]</field>-->
             <!--            <field name="context">{'group_by': ['limit_date']}</field>-->
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,kanban,pivot,graph,form</field>
         </record>
         <record model="ir.actions.act_window" id="odoo_version_action">
             <field name="name">Odoo version</field>

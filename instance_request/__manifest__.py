@@ -24,7 +24,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'mail'],
+    'depends': ['base', 'mail', 'contacts'],
 
     # always loaded
     'data': [
@@ -33,6 +33,8 @@
         # 'views/views.xml',
         # 'views/templates.xml',
         'views/instance_request.xml',
+        'wizard/instance_wizard.xml',
+        'views/res_partner.xml',
         'datas/version_odoo.xml',
         'datas/mail_activity_type.xml',
         'datas/mail_template.xml',
