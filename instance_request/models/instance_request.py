@@ -32,6 +32,7 @@ class InstanceRequest(models.Model):
     requests_line_ids = fields.One2many('instance.request.line', 'instance_id', string="Lines")
 
     nb_lines = fields.Integer(string="Nb lines", compute='_compute_nb_lines', store=1)
+    partner_id = fields.Many2one('res.partner', string="Contact")
 
     @api.depends('requests_line_ids')
     def _compute_nb_lines(self):

@@ -38,5 +38,6 @@
         'datas/version_odoo.xml',
         'datas/mail_activity_type.xml',
         'datas/mail_template.xml',
+        'reports/instance_request_report.xml',
     ],
 }

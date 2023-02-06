@@ -38,6 +38,7 @@
                 <tree decoration-warning="color=='yellow'" decoration-danger="color=='red'"
                       decoration-success="color=='green'">
                     <field name="name"/>
+                    <field name="partner_id"/>
                     <field name="color" invisible="0"/>
                     <field name="odoo_version_id"/>
                     <field name="odoo_version_ids" widget="many2many_tags" options="{'color_field': 'id'}"/>
@@ -170,6 +171,7 @@
                                 <field name="nb_lines"/>
                             </group>
                             <group>
+                                <field name="partner_id"/>
                                 <field name="odoo_version_id"/>
                                 <field name="odoo_version_ids" widget="many2many_tags" options="{'color_field': 'id'}"/>
                                 <field name="color" groups="instance_request.group_instance_request" invisible="0"/>
