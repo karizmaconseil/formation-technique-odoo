@@ -296,5 +296,6 @@
             <menuitem name="Server to list" id="instance_request" parent="instance_request.menu_2"
                       action="instance_request.action_server"/>
         -->
+
     </data>
 </odoo>

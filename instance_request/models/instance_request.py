@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from pprint import pprint
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError
 
 
@@ -31,7 +31,7 @@ class InstanceRequest(models.Model):
     odoo_version_ids = fields.Many2many('odoo.version', string="Versions odoo")
     requests_line_ids = fields.One2many('instance.request.line', 'instance_id', string="Lines")
 
-    nb_lines = fields.Integer(string="Nb lines", compute='_compute_nb_lines', store=1)
+    nb_lines = fields.Integer(string=_("Nb lines"), compute='_compute_nb_lines', store=1)
     partner_id = fields.Many2one('res.partner', string="Contact")
 
     @api.depends('requests_line_ids')
